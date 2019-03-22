@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.soul.extend.demo.extend;
+package org.dromara.soul.extend.extend;
 
 import org.dromara.soul.common.enums.PluginTypeEnum;
 import org.dromara.soul.web.plugin.SoulPlugin;
@@ -27,17 +27,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-
 /**
  *  This is your custom plugin.
- *  He is running in after before plugin, implement your own functionality.
+ *  He is running in the end, implement your own functionality.
  * @author xiaoyu(Myth)
  */
 @Component
-public class CustomFunctionPlugin implements SoulPlugin {
+public class CustomLastPlugin implements SoulPlugin {
 
-    /** logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomFunctionPlugin.class);
+    /**
+     * logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomLastPlugin.class);
 
     /**
      * Process the Web request and (optionally) delegate to the next
@@ -49,7 +50,7 @@ public class CustomFunctionPlugin implements SoulPlugin {
      */
     @Override
     public Mono<Void> execute(final ServerWebExchange exchange, final SoulPluginChain chain) {
-        LOGGER.debug("..........custom function start..............");
+        LOGGER.debug("..........custom last start..............");
         return chain.execute(exchange);
     }
 
@@ -60,7 +61,7 @@ public class CustomFunctionPlugin implements SoulPlugin {
      */
     @Override
     public PluginTypeEnum pluginType() {
-        return PluginTypeEnum.FUNCTION;
+        return PluginTypeEnum.LAST;
     }
 
     /**
@@ -80,6 +81,6 @@ public class CustomFunctionPlugin implements SoulPlugin {
      */
     @Override
     public String named() {
-        return "customFunction";
+        return "customLast";
     }
 }

@@ -45,6 +45,20 @@ public final class ZkPathConstants implements Constants {
     public static final String APP_AUTH_PARENT = "/soul/auth";
 
     /**
+     * The constant EXECUTOR_PARENT.
+     */
+    public static final String EXECUTOR_PARENT = "/soul/executor";
+
+    /**
+     * acquire executor_path.
+     *
+     * @return executor_path string
+     */
+    public static String buildExecutorPath() {
+        return String.join("/", EXECUTOR_PARENT);
+    }
+
+    /**
      * acquire app_auth_path.
      *
      * @param appKey appKey

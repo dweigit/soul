@@ -130,5 +130,8 @@ INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_upda
 INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_updated`) VALUES ('6', 'dubbo', '1', '2018-06-23 10:26:41', '2018-06-11 10:11:47');
 INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_updated`) VALUES ('7', 'monitor', '0', '2018-06-25 13:47:57', '2018-06-25 13:47:57');
 INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_updated`) VALUES ('8', 'springCloud', '1', '2018-06-25 13:47:57', '2018-06-25 13:47:57');
+
+INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_updated`) VALUES ('9', 'authc', '0', '2018-06-25 13:47:57', '2018-06-25 13:47:57');
+INSERT INTO `soul`.`plugin` (`id`, `name`, `enabled`, `date_created`, `date_updated`) VALUES ('10', 'authz', '1', '2018-06-25 13:47:57', '2018-06-25 13:47:57');
 /**user**/
 INSERT INTO `soul`.`dashboard_user` (`id`, `user_name`, `password`, `role`, `enabled`, `date_created`, `date_updated`) VALUES ('1', 'admin', '123456', '1', '1', '2018-06-23 15:12:22', '2018-06-23 15:12:23');

@@ -16,9 +16,9 @@
  *
  */
 
-package org.dromara.soul.extend.demo.config;
+package org.dromara.soul.extend.config;
 
-import org.dromara.soul.extend.demo.extend.FunctionPlugin;
+import org.dromara.soul.extend.extend.FunctionPlugin;
 import org.dromara.soul.web.cache.ZookeeperCacheManager;
 import org.dromara.soul.web.plugin.SoulPlugin;
 import org.springframework.beans.factory.annotation.Autowired;

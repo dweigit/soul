@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.soul.extend.demo.extend;
+package org.dromara.soul.extend.extend;
 
 import org.dromara.soul.common.dto.zk.RuleZkDTO;
 import org.dromara.soul.common.dto.zk.SelectorZkDTO;

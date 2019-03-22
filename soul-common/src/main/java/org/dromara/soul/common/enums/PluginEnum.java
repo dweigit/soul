@@ -41,6 +41,14 @@ public enum PluginEnum {
      * Sign plugin enum.
      */
     SIGN(2, "sign"),
+    /**
+     * authc plugin enum.
+     */
+    AUTHC(3, "authc"),
+    /**
+     * authz plugin enum.
+     */
+    AUTHZ(4, "authz"),
 
     /**
      * Waf plugin enum.
