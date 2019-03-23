@@ -1,4 +1,4 @@
-package org.dromara.soul.extend.ext;
+package org.dromara.soul.executor.ext;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.dromara.soul.common.utils.LogUtils;
 import org.dromara.soul.common.utils.SignUtils;
 import org.dromara.soul.web.cache.ZookeeperCacheManager;
 import org.dromara.soul.web.plugin.AbstractSoulPlugin;
-import org.dromara.soul.web.plugin.SoulPlugin;
 import org.dromara.soul.web.plugin.SoulPluginChain;
 import org.dromara.soul.web.request.RequestDTO;
 import org.springframework.http.HttpStatus;

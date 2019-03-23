@@ -1,21 +1,14 @@
-package org.dromara.soul.extend.service;
+package org.dromara.soul.executor.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.I0Itec.zkclient.ZkClient;
 import org.dromara.soul.common.constant.ZkPathConstants;
 import org.dromara.soul.common.dto.zk.ExecutorZkDTO;
-import org.dromara.soul.extend.util.ServerEnvInfo;
+import org.dromara.soul.executor.util.ServerEnvInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.software.os.OperatingSystem;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;

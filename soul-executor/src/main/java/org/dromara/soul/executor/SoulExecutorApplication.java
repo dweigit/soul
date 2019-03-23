@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.soul.extend;
+package org.dromara.soul.executor;
 
 import org.dromara.soul.configuration.zookeeper.ZookeeperConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -25,9 +25,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 /**
- * SoulExtendApplication sample start.
- *
- * @author xiaoyu
+ * @description: TODO
+ * @author: 402536196@qq.com
+ * @date: 2019-03-21 17:39
+ * @version: V1.0
  */
 @SpringBootApplication
 @ComponentScan("org.dromara.soul")

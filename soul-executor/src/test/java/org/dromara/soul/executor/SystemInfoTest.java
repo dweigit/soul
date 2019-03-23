@@ -1,4 +1,4 @@
-package org.dromara.soul.extend;
+package org.dromara.soul.executor;
 
 /**
  * OSHI (https://github.com/oshi/oshi)

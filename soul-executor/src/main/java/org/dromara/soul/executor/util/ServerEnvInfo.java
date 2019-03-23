@@ -1,4 +1,4 @@
-package org.dromara.soul.extend.util;
+package org.dromara.soul.executor.util;
 
 
 import cn.hutool.json.JSONUtil;

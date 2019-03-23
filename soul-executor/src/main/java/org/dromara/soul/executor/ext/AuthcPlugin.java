@@ -1,4 +1,4 @@
-package org.dromara.soul.extend.ext;
+package org.dromara.soul.executor.ext;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
