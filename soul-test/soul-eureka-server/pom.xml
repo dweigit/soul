@@ -21,20 +21,29 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>soul</artifactId>
+        <artifactId>soul-test</artifactId>
         <groupId>org.dromara</groupId>
         <version>1.0.2-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>soul-test</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>soul-test-http</module>
-        <module>soul-test-dubbo</module>
-        <module>soul-test-springcloud</module>
-		<module>soul-eureka-server</module>
-    </modules>
+    <artifactId>soul-eureka-server</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>2.0.0.RELEASE</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
