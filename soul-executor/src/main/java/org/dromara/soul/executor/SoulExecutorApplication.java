@@ -19,6 +19,7 @@
 package org.dromara.soul.executor;
 
 import org.dromara.soul.configuration.zookeeper.ZookeeperConfiguration;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,7 +37,10 @@ import org.springframework.context.annotation.Import;
 public class SoulExecutorApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(SoulExecutorApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(SoulExecutorApplication.class);
+        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.run(args);
+//        SpringApplication.run(SoulExecutorApplication.class, args);
     }
 
 }
