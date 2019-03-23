@@ -74,7 +74,7 @@
         <springfox.version>2.9.2</springfox.version>
         <mybatis.starter.version>2.0.0</mybatis.starter.version>
         <mysql.version>8.0.15</mysql.version>
-        <druid.version>1.1.14</druid.version>
+        <fastjson.version>1.2.56</fastjson.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <commons-collections4.version>4.3</commons-collections4.version>
         <commons-dbcp.version>1.2.1</commons-dbcp.version>
@@ -82,9 +82,9 @@
         <reactor-spring.version>1.0.1.RELEASE</reactor-spring.version>
         <disruptor.version>3.4.0</disruptor.version>
         <hessian.version>4.0.60</hessian.version>
-        <protostuff.version>1.6.0</protostuff.version>
-        <kryo.version>4.0.0</kryo.version>
-        <pagehelper.version>5.1.8</pagehelper.version>
+        <protostuff.version>1.1.3</protostuff.version>
+        <kryo.version>4.0.2</kryo.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
         <dubbo.version>2.6.0</dubbo.version>
         <gson.version>2.8.5</gson.version>
         <okhttp.version>3.14.0</okhttp.version>
@@ -92,6 +92,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Greenwich.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.dromara</groupId>
@@ -172,12 +179,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
@@ -251,6 +252,12 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
 
         </dependencies>
