@@ -28,10 +28,18 @@ spring:
         connectionTimeout : 2000
         serializer : KryoSerializer
 soul:
-    bufferSize: 4096
-    timeVerify:
-       timeDelay : 10
-       enabled: false
+  bufferSize: 2048
+  timeVerify:
+    timeDelay : 10
+    enabled: false
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+  client:
+    serviceUrl:
+      defaultZone: http://eureka.didispace.com/eureka/
+
 logging:
     level:
         root: info
@@ -41,3 +49,5 @@ logging:
         org.dromara.soul.lottery: debug
         org.dromara.soul: debug
     path: "./logs"
+    pattern:
+      console: "%boldMagenta(%d{yyyy-MM-dd HH:mm:ss})  [%p]  %highlight(%C:%L)  : %m %n"
