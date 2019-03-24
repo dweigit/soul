@@ -16,7 +16,7 @@
  *
  */
 
-package org.dromara.soul.executor.ext;
+package org.dromara.soul.executor.extplugin;
 
 import org.dromara.soul.common.dto.zk.RuleZkDTO;
 import org.dromara.soul.common.dto.zk.SelectorZkDTO;

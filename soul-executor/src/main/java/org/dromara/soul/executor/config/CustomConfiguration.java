@@ -18,7 +18,7 @@
 
 package org.dromara.soul.executor.config;
 
-import org.dromara.soul.executor.ext.FunctionPlugin;
+import org.dromara.soul.executor.extplugin.FunctionPlugin;
 import org.dromara.soul.web.cache.ZookeeperCacheManager;
 import org.dromara.soul.web.plugin.SoulPlugin;
 import org.springframework.beans.factory.annotation.Autowired;

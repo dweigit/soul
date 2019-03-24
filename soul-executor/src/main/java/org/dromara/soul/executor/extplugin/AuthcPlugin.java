@@ -1,9 +1,9 @@
-package org.dromara.soul.executor.ext;
+package org.dromara.soul.executor.extplugin;
 
 import com.google.common.collect.Maps;
+import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.soul.common.constant.Constants;
 import org.dromara.soul.common.dto.zk.AppAuthZkDTO;
 import org.dromara.soul.common.dto.zk.RuleZkDTO;
 import org.dromara.soul.common.dto.zk.SelectorZkDTO;
@@ -13,10 +13,13 @@ import org.dromara.soul.common.result.SoulResult;
 import org.dromara.soul.common.utils.JsonUtils;
 import org.dromara.soul.common.utils.LogUtils;
 import org.dromara.soul.common.utils.SignUtils;
+import org.dromara.soul.executor.ext.common.Constants;
 import org.dromara.soul.web.cache.ZookeeperCacheManager;
 import org.dromara.soul.web.plugin.AbstractSoulPlugin;
 import org.dromara.soul.web.plugin.SoulPluginChain;
+import org.dromara.soul.web.plugin.ratelimter.RedisRateLimiter;
 import org.dromara.soul.web.request.RequestDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -58,10 +61,10 @@ public class AuthcPlugin  extends AbstractSoulPlugin {
     @Override
     protected Mono<Void> doExecute(final ServerWebExchange exchange, final SoulPluginChain chain, final SelectorZkDTO selector, final RuleZkDTO rule) {
         final RequestDTO requestDTO = exchange.getAttribute(Constants.REQUESTDTO);
-        final Boolean success = signVerify(Objects.requireNonNull(requestDTO));
+        final Boolean success = doAuthc(Objects.requireNonNull(requestDTO));
         if (!success) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            final SoulResult error = SoulResult.error(HttpStatus.UNAUTHORIZED.value(), Constants.SIGN_IS_NOT_PASS);
+            final SoulResult error = SoulResult.error(HttpStatus.UNAUTHORIZED.value(), Constants.AUTHC_IS_NOT_PASS);
             return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
                     .bufferFactory().wrap(Objects.requireNonNull(JsonUtils.toJson(error)).getBytes())));
         }
@@ -69,16 +72,17 @@ public class AuthcPlugin  extends AbstractSoulPlugin {
     }
 
     /**
-     * verify sign .
+     * check token or appSecret .
      *
      * @param requestDTO {@linkplain RequestDTO}
      * @return result : True is pass, False is not pass.
      */
-    private Boolean signVerify(final RequestDTO requestDTO) {
+    private Boolean doAuthc(final RequestDTO requestDTO) {
         if(StringUtils.isBlank(requestDTO.getAppKey())){
-            LogUtils.error(log, () ->  " app key can not incoming!");
+            LogUtils.error(log, () ->  " appKey can not incoming!");
             return false;
         }
+
         final AppAuthZkDTO appAuthZkDTO = zookeeperCacheManager.findAuthDTOByAppKey(requestDTO.getAppKey());
         if (Objects.isNull(appAuthZkDTO)
                 || StringUtils.isBlank(requestDTO.getSign())
