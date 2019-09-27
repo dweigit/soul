@@ -40,11 +40,20 @@ public class DubboTestServiceImpl implements DubboTestService {
     }
 
     @Override
+    public DubboTest findAll() {
+        DubboTest dubboTest = new DubboTest();
+        dubboTest.setName("findAll");
+        return dubboTest;
+    }
+
+    @Override
+    public String findByLong(Long id) {
+        return "Long id" + id;
+    }
+
+    @Override
     public DubboTest insert(DubboTest dubboTest) {
-        DubboTest test = new DubboTest();
-        test.setId("2");
-        test.setName("myth");
-        return test;
+        return dubboTest;
     }
 
     @Override

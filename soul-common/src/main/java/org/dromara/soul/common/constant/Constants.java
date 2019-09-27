@@ -56,6 +56,11 @@ public interface Constants {
     String DUBBO_PARAMS = "dubbo_params";
 
     /**
+     * The constant DECODE.
+     */
+    String DECODE = "UTF-8";
+
+    /**
      * The constant MODULE.
      */
     String MODULE = "module";
@@ -79,6 +84,11 @@ public interface Constants {
      * The constant EXT_INFO.
      */
     String EXT_INFO = "extInfo";
+
+    /**
+     * The constant PATH_VARIABLE.
+     */
+    String PATH_VARIABLE = "pathVariable";
 
     /**
      * The constant HTTP_METHOD.
@@ -148,7 +158,7 @@ public interface Constants {
     /**
      * The constant UPSTREAM_NOT_FIND.
      */
-    String UPSTREAM_NOT_FIND = "this can not rule upstream please check you config!";
+    String UPSTREAM_NOT_FIND = "this can not rule upstream please check you configuration!";
 
     /**
      * The constant TOO_MANY_REQUESTS.

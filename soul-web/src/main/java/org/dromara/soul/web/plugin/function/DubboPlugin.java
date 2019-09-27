@@ -21,17 +21,17 @@ package org.dromara.soul.web.plugin.function;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.soul.common.constant.Constants;
 import org.dromara.soul.common.constant.DubboParamConstants;
+import org.dromara.soul.common.dto.RuleData;
+import org.dromara.soul.common.dto.SelectorData;
 import org.dromara.soul.common.dto.convert.rule.DubboRuleHandle;
 import org.dromara.soul.common.dto.convert.selector.DubboSelectorHandle;
-import org.dromara.soul.common.dto.zk.RuleZkDTO;
-import org.dromara.soul.common.dto.zk.SelectorZkDTO;
 import org.dromara.soul.common.enums.PluginEnum;
 import org.dromara.soul.common.enums.PluginTypeEnum;
 import org.dromara.soul.common.enums.ResultEnum;
 import org.dromara.soul.common.enums.RpcTypeEnum;
-import org.dromara.soul.common.utils.GSONUtils;
+import org.dromara.soul.common.utils.GsonUtils;
 import org.dromara.soul.common.utils.LogUtils;
-import org.dromara.soul.web.cache.ZookeeperCacheManager;
+import org.dromara.soul.web.cache.LocalCacheManager;
 import org.dromara.soul.web.plugin.AbstractSoulPlugin;
 import org.dromara.soul.web.plugin.SoulPluginChain;
 import org.dromara.soul.web.plugin.dubbo.DubboProxyService;
@@ -65,22 +65,22 @@ public class DubboPlugin extends AbstractSoulPlugin {
     /**
      * Instantiates a new Dubbo plugin.
      *
-     * @param zookeeperCacheManager the zookeeper cache manager
-     * @param dubboProxyService     the dubbo proxy service
+     * @param localCacheManager the local cache manager
+     * @param dubboProxyService the dubbo proxy service
      */
-    public DubboPlugin(final ZookeeperCacheManager zookeeperCacheManager, final DubboProxyService dubboProxyService) {
-        super(zookeeperCacheManager);
+    public DubboPlugin(final LocalCacheManager localCacheManager, final DubboProxyService dubboProxyService) {
+        super(localCacheManager);
         this.dubboProxyService = dubboProxyService;
     }
 
     @Override
-    protected Mono<Void> doExecute(final ServerWebExchange exchange, final SoulPluginChain chain, final SelectorZkDTO selector, final RuleZkDTO rule) {
+    protected Mono<Void> doExecute(final ServerWebExchange exchange, final SoulPluginChain chain, final SelectorData selector, final RuleData rule) {
 
         final Map<String, Object> paramMap = exchange.getAttribute(Constants.DUBBO_PARAMS);
 
-        final DubboRuleHandle ruleHandle = GSONUtils.getInstance().fromJson(rule.getHandle(), DubboRuleHandle.class);
+        final DubboRuleHandle ruleHandle = GsonUtils.getInstance().fromJson(rule.getHandle(), DubboRuleHandle.class);
 
-        final DubboSelectorHandle selectorHandle = GSONUtils.getInstance().fromJson(selector.getHandle(), DubboSelectorHandle.class);
+        final DubboSelectorHandle selectorHandle = GsonUtils.getInstance().fromJson(selector.getHandle(), DubboSelectorHandle.class);
 
         if (StringUtils.isBlank(ruleHandle.getGroupKey())) {
             ruleHandle.setGroupKey(String.valueOf(Objects.requireNonNull(paramMap).get(DubboParamConstants.INTERFACE_NAME)));
@@ -154,7 +154,7 @@ public class DubboPlugin extends AbstractSoulPlugin {
     private boolean checkData(final DubboSelectorHandle dubboSelectorHandle) {
         if (StringUtils.isBlank(dubboSelectorHandle.getRegistry())
                 || StringUtils.isBlank(dubboSelectorHandle.getAppName())) {
-            LogUtils.error(LOGGER, () -> "dubbo handle require param not config!");
+            LogUtils.error(LOGGER, () -> "dubbo handle require param not configuration!");
             return false;
         }
         return true;

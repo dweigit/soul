@@ -18,8 +18,8 @@
 
 package org.dromara.soul.web.condition.strategy;
 
-import org.dromara.soul.common.dto.zk.ConditionZkDTO;
-import org.dromara.soul.web.condition.judge.ConditionJudge;
+import org.dromara.soul.common.dto.ConditionData;
+import org.dromara.soul.web.condition.judge.OperatorJudgeFactory;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
@@ -32,9 +32,9 @@ import java.util.List;
 public class AndMatchStrategy extends AbstractMatchStrategy implements MatchStrategy {
 
     @Override
-    public Boolean match(final List<ConditionZkDTO> conditionZkDTOList, final ServerWebExchange exchange) {
-        return conditionZkDTOList
+    public Boolean match(final List<ConditionData> conditionDataList, final ServerWebExchange exchange) {
+        return conditionDataList
                 .stream()
-                .allMatch(condition -> ConditionJudge.judge(condition, buildRealData(condition, exchange)));
+                .allMatch(condition -> OperatorJudgeFactory.judge(condition, buildRealData(condition, exchange)));
     }
 }

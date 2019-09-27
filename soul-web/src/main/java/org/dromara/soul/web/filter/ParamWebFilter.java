@@ -20,12 +20,12 @@ package org.dromara.soul.web.filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.soul.common.constant.Constants;
-import org.dromara.soul.common.constant.DubboParamConstants;
 import org.dromara.soul.common.enums.HttpMethodEnum;
 import org.dromara.soul.common.enums.RpcTypeEnum;
 import org.dromara.soul.common.result.SoulResult;
-import org.dromara.soul.common.utils.GSONUtils;
+import org.dromara.soul.common.utils.GsonUtils;
 import org.dromara.soul.web.request.RequestDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -33,7 +33,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,11 +45,15 @@ public class ParamWebFilter extends AbstractWebFilter {
     @Override
     protected Mono<Boolean> doFilter(final ServerWebExchange exchange, final WebFilterChain chain) {
         final ServerHttpRequest request = exchange.getRequest();
-        final RequestDTO requestDTO = RequestDTO.transform(request);
-        if (verify(requestDTO, exchange)) {
-            exchange.getAttributes().put(Constants.REQUESTDTO, requestDTO);
-        } else {
-            return Mono.just(false);
+        final HttpHeaders headers = request.getHeaders();
+        final String upgrade = headers.getFirst("Upgrade");
+        if (StringUtils.isBlank(upgrade) || !RpcTypeEnum.WEB_SOCKET.getName().equals(upgrade)) {
+            final RequestDTO requestDTO = RequestDTO.transform(request);
+            if (verify(requestDTO, exchange)) {
+                exchange.getAttributes().put(Constants.REQUESTDTO, requestDTO);
+            } else {
+                return Mono.just(false);
+            }
         }
         return Mono.just(true);
     }
@@ -61,7 +64,7 @@ public class ParamWebFilter extends AbstractWebFilter {
         response.setStatusCode(HttpStatus.BAD_REQUEST);
         final SoulResult result = SoulResult.error("you param is error please check with doc!");
         return response.writeWith(Mono.just(response.bufferFactory()
-                .wrap(GSONUtils.getInstance().toJson(result).getBytes())));
+                .wrap(GsonUtils.getInstance().toJson(result).getBytes())));
     }
 
     private Boolean verify(final RequestDTO requestDTO, final ServerWebExchange exchange) {
@@ -71,24 +74,13 @@ public class ParamWebFilter extends AbstractWebFilter {
             return false;
         }
         final RpcTypeEnum rpcTypeEnum = RpcTypeEnum.acquireByName(requestDTO.getRpcType());
-
         if (Objects.isNull(rpcTypeEnum)) {
             return false;
         }
         //if rpcType is dubbo
         if (Objects.equals(rpcTypeEnum.getName(), RpcTypeEnum.DUBBO.getName())) {
-            final String dubboParams = requestDTO.getDubboParams();
-            if (StringUtils.isBlank(dubboParams)) {
-                return false;
-            }
-            final Map<String, Object> paramMap = GSONUtils.getInstance().toObjectMap(dubboParams);
-            if (paramMap.containsKey(DubboParamConstants.INTERFACE_NAME)
-                    && paramMap.containsKey(DubboParamConstants.METHOD)) {
-                exchange.getAttributes().put(Constants.DUBBO_PARAMS, paramMap);
-                return true;
-            } else {
-                return false;
-            }
+            final Object param = exchange.getAttributes().get(Constants.DUBBO_PARAMS);
+            return !Objects.isNull(param);
         } else {
             return !StringUtils.isBlank(requestDTO.getHttpMethod())
                     && !Objects.isNull(HttpMethodEnum.acquireByName(requestDTO.getHttpMethod()));

@@ -15,15 +15,17 @@ spring:
      password: root
      dbcp2:
        driver-class-name: com.mysql.jdbc.Driver
-   zookeeper:
-     url : localhost:2181
-     sessionTimeout: 5000
-     connectionTimeout : 2000
-     serializer : KryoSerializer
-
 mybatis:
-  config-location: classpath:/mybatis/mybatis-config.xml
+  config-location: classpath:/mybatis/mybatis-configuration.xml
   mapper-locations: classpath:/mappers/*.xml
+
+soul:
+  sync:
+      strategy: zookeeper
+      zookeeper:
+        url: localhost:2181
+        sessionTimeout: 5000
+        connectionTimeout: 2000
 
 logging:
     level:
@@ -34,4 +36,4 @@ logging:
         org.dromara.soul.lottery: debug
         org.dromara.soul: debug
 
-    path: "./logs/admin"
+    path: "./logs/soul-admin"

@@ -21,20 +21,19 @@ package org.dromara.soul.web.plugin.function;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.soul.common.constant.Constants;
+import org.dromara.soul.common.dto.RuleData;
+import org.dromara.soul.common.dto.SelectorData;
 import org.dromara.soul.common.dto.convert.DivideUpstream;
 import org.dromara.soul.common.dto.convert.rule.DivideRuleHandle;
-import org.dromara.soul.common.dto.zk.RuleZkDTO;
-import org.dromara.soul.common.dto.zk.SelectorZkDTO;
 import org.dromara.soul.common.enums.PluginEnum;
 import org.dromara.soul.common.enums.PluginTypeEnum;
 import org.dromara.soul.common.enums.ResultEnum;
 import org.dromara.soul.common.enums.RpcTypeEnum;
-import org.dromara.soul.common.utils.GSONUtils;
+import org.dromara.soul.common.utils.GsonUtils;
 import org.dromara.soul.common.utils.LogUtils;
-import org.dromara.soul.web.balance.LoadBalance;
-import org.dromara.soul.web.balance.factory.LoadBalanceFactory;
+import org.dromara.soul.web.balance.utils.LoadBalanceUtils;
+import org.dromara.soul.web.cache.LocalCacheManager;
 import org.dromara.soul.web.cache.UpstreamCacheManager;
-import org.dromara.soul.web.cache.ZookeeperCacheManager;
 import org.dromara.soul.web.plugin.AbstractSoulPlugin;
 import org.dromara.soul.web.plugin.SoulPluginChain;
 import org.dromara.soul.web.plugin.hystrix.HttpCommand;
@@ -44,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
 import rx.Subscription;
 
 import java.util.List;
@@ -67,18 +65,19 @@ public class DividePlugin extends AbstractSoulPlugin {
     /**
      * Instantiates a new Divide plugin.
      *
-     * @param zookeeperCacheManager the zookeeper cache manager
+     * @param localCacheManager    the local cache manager
+     * @param upstreamCacheManager the upstream cache manager
      */
-    public DividePlugin(final ZookeeperCacheManager zookeeperCacheManager, final UpstreamCacheManager upstreamCacheManager) {
-        super(zookeeperCacheManager);
+    public DividePlugin(final LocalCacheManager localCacheManager, final UpstreamCacheManager upstreamCacheManager) {
+        super(localCacheManager);
         this.upstreamCacheManager = upstreamCacheManager;
     }
 
     @Override
-    protected Mono<Void> doExecute(final ServerWebExchange exchange, final SoulPluginChain chain, final SelectorZkDTO selector, final RuleZkDTO rule) {
+    protected Mono<Void> doExecute(final ServerWebExchange exchange, final SoulPluginChain chain, final SelectorData selector, final RuleData rule) {
         final RequestDTO requestDTO = exchange.getAttribute(Constants.REQUESTDTO);
 
-        final DivideRuleHandle ruleHandle = GSONUtils.getInstance().fromJson(rule.getHandle(), DivideRuleHandle.class);
+        final DivideRuleHandle ruleHandle = GsonUtils.getInstance().fromJson(rule.getHandle(), DivideRuleHandle.class);
 
         if (StringUtils.isBlank(ruleHandle.getGroupKey())) {
             ruleHandle.setGroupKey(Objects.requireNonNull(requestDTO).getModule());
@@ -91,20 +90,14 @@ public class DividePlugin extends AbstractSoulPlugin {
         final List<DivideUpstream> upstreamList =
                 upstreamCacheManager.findUpstreamListBySelectorId(selector.getId());
         if (CollectionUtils.isEmpty(upstreamList)) {
-            LogUtils.error(LOGGER, "divide upstream config error：{}", rule::toString);
+            LogUtils.error(LOGGER, "divide upstream configuration error：{}", rule::toString);
             return chain.execute(exchange);
         }
 
-        DivideUpstream divideUpstream = null;
-        if (upstreamList.size() == 1) {
-            divideUpstream = upstreamList.get(0);
-        } else {
-            if (StringUtils.isNoneBlank(ruleHandle.getLoadBalance())) {
-                final LoadBalance loadBalance = LoadBalanceFactory.of(ruleHandle.getLoadBalance());
-                final String ip = Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress();
-                divideUpstream = loadBalance.select(upstreamList, ip);
-            }
-        }
+        final String ip = Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress();
+
+        DivideUpstream divideUpstream =
+                LoadBalanceUtils.selector(upstreamList, ruleHandle.getLoadBalance(), ip);
 
         if (Objects.isNull(divideUpstream)) {
             LogUtils.error(LOGGER, () -> "LoadBalance has error！");
@@ -113,7 +106,7 @@ public class DividePlugin extends AbstractSoulPlugin {
 
         HttpCommand command = new HttpCommand(HystrixBuilder.build(ruleHandle), exchange, chain,
                 requestDTO, buildRealURL(divideUpstream), ruleHandle.getTimeout());
-        return Mono.create((MonoSink<Object> s) -> {
+        return Mono.create(s -> {
             Subscription sub = command.toObservable().subscribe(s::success,
                     s::error, s::success);
             s.onCancel(sub::unsubscribe);

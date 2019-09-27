@@ -22,9 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.soul.common.constant.Constants;
 import org.dromara.soul.common.result.SoulResult;
 import org.dromara.soul.common.utils.DateUtils;
-import org.dromara.soul.common.utils.GSONUtils;
+import org.dromara.soul.common.utils.GsonUtils;
+import org.dromara.soul.web.config.SoulConfig;
 import org.dromara.soul.web.request.RequestDTO;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -32,6 +32,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * this is visit time verify filter.
@@ -40,21 +41,22 @@ import java.time.LocalDateTime;
  */
 public class TimeWebFilter extends AbstractWebFilter {
 
-    @Value("${soul.timeVerify.timeDelay:10}")
-    private long timeDelay;
+    private SoulConfig soulConfig;
+
+    public TimeWebFilter(final SoulConfig soulConfig) {
+        this.soulConfig = soulConfig;
+    }
 
     @Override
     protected Mono<Boolean> doFilter(final ServerWebExchange exchange, final WebFilterChain chain) {
         final RequestDTO requestDTO = exchange.getAttribute(Constants.REQUESTDTO);
-        assert requestDTO != null;
-        final String timestamp = requestDTO.getTimestamp();
-        if (StringUtils.isBlank(timestamp)) {
+        if (Objects.isNull(requestDTO) || StringUtils.isBlank(requestDTO.getTimestamp())) {
             return Mono.just(false);
         }
-        final LocalDateTime start = DateUtils.parseLocalDateTime(timestamp);
+        final LocalDateTime start = DateUtils.parseLocalDateTime(requestDTO.getTimestamp());
         final LocalDateTime now = LocalDateTime.now();
         final long between = DateUtils.acquireMinutesBetween(start, now);
-        if (between < timeDelay) {
+        if (between < soulConfig.getFilterTime()) {
             return Mono.just(true);
         }
         return Mono.just(false);
@@ -66,6 +68,6 @@ public class TimeWebFilter extends AbstractWebFilter {
         response.setStatusCode(HttpStatus.REQUEST_TIMEOUT);
         final SoulResult result = SoulResult.error("timestamp is not passed validation");
         return response.writeWith(Mono.just(response.bufferFactory()
-                .wrap(GSONUtils.getInstance().toJson(result).getBytes())));
+                .wrap(GsonUtils.getInstance().toJson(result).getBytes())));
     }
 }
